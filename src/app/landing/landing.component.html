@@ -1,0 +1,82 @@
+<div class="min-h-screen bg-gray-100">
+  <!-- Navigation Bar -->
+  <nav class="bg-blue-600 text-white p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <a href="/" class="text-2xl font-bold">Disaster Manager</a>
+      <ul class="flex space-x-6">
+        <li><a href="/donation" class="hover:text-gray-200">Donate</a></li>
+        <li><a href="/login" class="hover:text-gray-200">Login</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container mx-auto py-8 px-4">
+    <!-- Report Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white shadow-lg rounded-lg p-6 text-center">
+        <h2 class="text-xl font-semibold text-gray-800">Total Funds</h2>
+        <p class="text-4xl font-bold text-green-500">$50,000</p>
+        <p class="text-gray-600">Collected so far</p>
+      </div>
+      <div class="bg-white shadow-lg rounded-lg p-6 text-center">
+        <h2 class="text-xl font-semibold text-gray-800">Total Expenses</h2>
+        <p class="text-4xl font-bold text-red-500">$20,000</p>
+        <p class="text-gray-600">Used for relief</p>
+      </div>
+      <div class="bg-white shadow-lg rounded-lg p-6 text-center">
+        <h2 class="text-xl font-semibold text-gray-800">Active Volunteers</h2>
+        <p class="text-4xl font-bold text-blue-500">150</p>
+        <p class="text-gray-600">Available now</p>
+      </div>
+    </div>
+
+    <!-- Donation Section -->
+    <div class="bg-blue-600 text-white rounded-lg p-6 mb-8">
+      <h2 class="text-2xl font-bold mb-4">Make a Difference</h2>
+      <p class="mb-4">Your contribution helps provide relief to those in need. Every dollar counts!</p>
+      <a
+        href="/donation"
+        class="bg-white text-blue-600 px-6 py-2 rounded-md font-semibold hover:bg-gray-100"
+      >
+        Donate Now
+      </a>
+    </div>
+
+    <!-- Recent Crises -->
+    <div class="mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">Recent Crises</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        @for(crisis of recentCrises; track crisis.id){
+          <div
+          class="bg-white shadow-md rounded-md p-4 hover:shadow-lg transition"
+        >
+          <img
+            [src]="crisis.image"
+            alt="Crisis Image"
+            class="w-full h-32 object-cover rounded-md mb-2"
+          />
+          <h3 class="font-bold text-gray-700 text-lg mb-1">{{ crisis.title }}</h3>
+          <p class="text-gray-600 text-sm mb-1">Location: {{ crisis.location }}</p>
+          <p class="text-gray-600 text-sm">Severity: {{ crisis.severity }}</p>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Volunteer Information -->
+    <div>
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">Available Volunteers</h2>
+      <ul>
+        @for(volunteer of volunteers; track volunteer.id){
+          <li
+          class="border-b py-2 flex justify-between items-center"
+        >
+          <span class="text-gray-700">{{ volunteer.name }}</span>
+          <span class="text-gray-500 text-sm">{{ volunteer.contact }}</span>
+        </li>
+        }
+      </ul>
+    </div>
+  </div>
+</div>
