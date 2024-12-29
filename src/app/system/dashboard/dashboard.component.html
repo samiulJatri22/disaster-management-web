@@ -1,1 +1,62 @@
-dashboard
+<div class="p-6 bg-gray-100 min-h-screen">
+  <!-- Dashboard Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
+    <!-- Date Range Selector -->
+    <div class="flex items-center space-x-4">
+      <label for="start-date" class="text-sm font-medium text-gray-600">Start Date:</label>
+      <input type="date" id="start-date" [(ngModel)]="startDate" class="p-2 rounded border-gray-300">
+      <label for="end-date" class="text-sm font-medium text-gray-600">End Date:</label>
+      <input type="date" id="end-date" [(ngModel)]="endDate" class="p-2 rounded border-gray-300">
+      <button (click)="applyDateRange()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Apply</button>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white p-4 shadow rounded-lg">
+      <h2 class="text-xl font-semibold text-gray-700">Total Crises</h2>
+      <p class="text-3xl font-bold text-blue-600">{{ totalCrises }}</p>
+    </div>
+    <div class="bg-white p-4 shadow rounded-lg">
+      <h2 class="text-xl font-semibold text-gray-700">Total Fund Collected</h2>
+      <p class="text-3xl font-bold text-green-600">${{ totalFund }}</p>
+    </div>
+    <div class="bg-white p-4 shadow rounded-lg">
+      <h2 class="text-xl font-semibold text-gray-700">Total Relief Distributed</h2>
+      <p class="text-3xl font-bold text-yellow-600">{{ totalRelief }} kg</p>
+    </div>
+    <div class="bg-white p-4 shadow rounded-lg">
+      <h2 class="text-xl font-semibold text-gray-700">New Volunteers</h2>
+      <p class="text-3xl font-bold text-purple-600">{{ newVolunteers }}</p>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white p-6 shadow rounded-lg h-[500px]">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">Donation Trends</h2>
+      <!-- Placeholder for Chart -->
+      <canvas id="donationTrendsChart"></canvas>
+    </div>
+
+    <div class="bg-white p-6 shadow rounded-lg h-[500px] pb-20">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">Crisis Severity Distribution</h2>
+      <!-- Placeholder for Chart -->
+      <canvas class="h-[400px]" id="crisisSeverityChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Recent Activity Feed -->
+  <div class="bg-white p-6 shadow rounded-lg mt-6">
+    <h2 class="text-xl font-semibold text-gray-700 mb-4">Recent Activities</h2>
+    <ul class="space-y-3">
+      @for(activity of recentActivities; track activity._id){
+      <li class="flex items-center justify-between">
+        <span>{{ activity.description }}</span>
+        <span class="text-sm text-gray-500">{{ activity.time }}</span>
+      </li>
+    }
+    </ul>
+  </div>
+</div>
