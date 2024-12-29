@@ -16,12 +16,36 @@ export const routes: Routes = [
     path: 'system',
     component: SystemComponent,
     children: [
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'relief', component: ReliefComponent },
-      { path: 'crisis', component: CrisisComponent },
-      { path: 'donation', component: DonationComponent },
-      { path: 'volunteer', component: VolunteerComponent },
-      { path: 'admin', component: AdminComponent },
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
+        data: { animation: 'DashboardPage' },
+      },
+      {
+        path: 'relief',
+        component: ReliefComponent,
+        data: { animation: 'ReliefPage' },
+      },
+      {
+        path: 'crisis',
+        component: CrisisComponent,
+        data: { animation: 'CrisisPage' },
+      },
+      {
+        path: 'donation',
+        component: DonationComponent,
+        data: { animation: 'DonationPage' },
+      },
+      {
+        path: 'volunteer',
+        component: VolunteerComponent,
+        data: { animation: 'VolunteerPage' },
+      },
+      {
+        path: 'admin',
+        component: AdminComponent,
+        data: { animation: 'AdminPage' },
+      },
     ],
   },
   { path: '**', redirectTo: '' },
