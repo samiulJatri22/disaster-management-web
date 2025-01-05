@@ -90,28 +90,28 @@
       </thead>
       <tbody>
         @for(volunteer of volunteers; track volunteer.id){
-        <tr class="border-b border-gray-200">
-          <td class="py-3 px-4 text-sm text-gray-800">{{ volunteer.name }}</td>
-          <td class="py-3 px-4 text-sm text-gray-600">{{ volunteer.contact }}</td>
-          <td class="py-3 px-4 text-sm text-gray-600">{{ volunteer.location }}</td>
-          <td class="py-3 px-4 text-sm text-gray-600">{{ volunteer.role }}</td>
-          <td class="py-3 px-4 text-sm text-gray-600">{{ volunteer.availability }}</td>
-          <td class="py-3 px-4 text-center">
-            <button
-              class="bg-blue-500 text-white px-4 py-2 rounded shadow mr-2"
-              (click)="editVolunteer(volunteer)"
-            >
-              Edit
-            </button>
-            <button
-              class="bg-red-500 text-white px-4 py-2 rounded shadow"
-              (click)="deleteVolunteer(volunteer.id)"
-            >
-              Delete
-            </button>
-          </td>
-        </tr>
-      }
+          <tr class="border-b border-gray-200">
+            <td class="py-3 px-4 text-sm text-gray-800">{{ volunteer.name }}</td>
+            <td class="py-3 px-4 text-sm text-gray-600">{{ volunteer.contact }}</td>
+            <td class="py-3 px-4 text-sm text-gray-600">{{ volunteer.location }}</td>
+            <td class="py-3 px-4 text-sm text-gray-600">{{ volunteer.role }}</td>
+            <td class="py-3 px-4 text-sm text-gray-600">{{ volunteer.availability }}</td>
+            <td class="py-3 px-4 text-center">
+              <button
+                class="bg-blue-500 text-white px-4 py-2 rounded shadow mr-2"
+                (click)="editVolunteer(volunteer)"
+              >
+                Edit
+              </button>
+              <button
+                class="bg-red-500 text-white px-4 py-2 rounded shadow"
+                (click)="deleteVolunteer(volunteer.id)"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
   </div>
