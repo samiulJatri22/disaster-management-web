@@ -4,7 +4,7 @@
   <!-- Form Section -->
   <div class="w-full bg-white p-8 shadow rounded-lg mb-8">
     <h2 class="text-2xl font-semibold text-gray-700 mb-4">
-      {{ isEditMode ? 'Update Volunteer' : 'Add New Volunteer' }}
+      {{ isEditMode ? "Update Volunteer" : "Add New Volunteer" }}
     </h2>
     <form (ngSubmit)="handleSubmit()" class="grid grid-cols-2 gap-4">
       <div>
@@ -30,37 +30,109 @@
         />
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700">Location</label>
+        <label class="block text-sm font-medium text-gray-700"
+          >Emergency Contact</label
+        >
         <input
           type="text"
-          [(ngModel)]="currentVolunteer.location"
-          name="location"
+          [(ngModel)]="currentVolunteer.emergencyContact"
+          name="emergencyContact"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          placeholder="Enter location"
+          placeholder="Enter emergency contact number"
           required
         />
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700">Role</label>
+        <label class="block text-sm font-medium text-gray-700">Address</label>
         <input
           type="text"
-          [(ngModel)]="currentVolunteer.role"
-          name="role"
+          [(ngModel)]="currentVolunteer.address"
+          name="address"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          placeholder="Enter role"
+          placeholder="Enter address"
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700"
+          >Profession</label
+        >
+        <input
+          type="text"
+          [(ngModel)]="currentVolunteer.profession"
+          name="profession"
+          class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          placeholder="Enter profession"
           required
         />
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700">Availability</label>
+        <label class="block text-sm font-medium text-gray-700"
+          >Date of Birth</label
+        >
+        <input
+          type="date"
+          [(ngModel)]="currentVolunteer.dob"
+          name="dob"
+          class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          required
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Skills</label>
+        <input
+          type="text"
+          [(ngModel)]="currentVolunteer.skill"
+          name="skill"
+          class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          placeholder="Enter skills (comma-separated)"
+          required
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700"
+          >Blood Group</label
+        >
+        <select
+          [(ngModel)]="currentVolunteer.bloodGroup"
+          name="bloodGroup"
+          class="mt-1 bg-white block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          required
+        >
+          <option value="AP">A+</option>
+          <option value="AN">A-</option>
+          <option value="BP">B+</option>
+          <option value="BN">B-</option>
+          <option value="ABP">AB+</option>
+          <option value="ABN">AB-</option>
+          <option value="OP">O+</option>
+          <option value="ON">O-</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700"
+          >Availability</label
+        >
         <select
           [(ngModel)]="currentVolunteer.availability"
           name="availability"
           class="mt-1 bg-white block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required
         >
-          <option value="Full-Time">Full-Time</option>
-          <option value="Part-Time">Part-Time</option>
+          <option value="FULL_TIME">Full-Time</option>
+          <option value="PART_TIME">Part-Time</option>
+          <option value="">Unavailable</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Status</label>
+        <select
+          [(ngModel)]="currentVolunteer.status"
+          name="status"
+          class="mt-1 bg-white block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          required
+        >
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
         </select>
       </div>
       <div class="col-span-2">
@@ -68,7 +140,7 @@
           type="submit"
           class="bg-indigo-600 text-white p-3 rounded-lg shadow hover:bg-indigo-700 focus:outline-none"
         >
-          {{ isEditMode ? 'Update Volunteer' : 'Add Volunteer' }}
+          {{ isEditMode ? "Update Volunteer" : "Add Volunteer" }}
         </button>
       </div>
     </form>
@@ -76,43 +148,84 @@
 
   <!-- Volunteer List Section -->
   <div>
+    @if(volunteers.length > 0){
     <h2 class="text-2xl font-semibold text-gray-700 mb-4">Volunteers List</h2>
-    <table class="min-w-full table-auto bg-white border-collapse shadow rounded-lg">
+    <table
+      class="min-w-full table-auto bg-white border-collapse shadow rounded-lg"
+    >
       <thead class="bg-gray-100">
         <tr>
-          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Name</th>
-          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Contact</th>
-          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Location</th>
-          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Role</th>
-          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Availability</th>
-          <th class="py-2 px-4 text-center text-sm font-medium text-gray-700">Actions</th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+            Name
+          </th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+            Contact
+          </th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+            Location
+          </th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+            Role
+          </th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+            Availability
+          </th>
+          <th class="py-2 px-4 text-center text-sm font-medium text-gray-700">
+            Actions
+          </th>
         </tr>
       </thead>
       <tbody>
         @for(volunteer of volunteers; track volunteer.id){
-          <tr class="border-b border-gray-200">
-            <td class="py-3 px-4 text-sm text-gray-800">{{ volunteer.name }}</td>
-            <td class="py-3 px-4 text-sm text-gray-600">{{ volunteer.contact }}</td>
-            <td class="py-3 px-4 text-sm text-gray-600">{{ volunteer.location }}</td>
-            <td class="py-3 px-4 text-sm text-gray-600">{{ volunteer.role }}</td>
-            <td class="py-3 px-4 text-sm text-gray-600">{{ volunteer.availability }}</td>
-            <td class="py-3 px-4 text-center">
-              <button
-                class="bg-blue-500 text-white px-4 py-2 rounded shadow mr-2"
-                (click)="editVolunteer(volunteer)"
-              >
-                Edit
-              </button>
-              <button
-                class="bg-red-500 text-white px-4 py-2 rounded shadow"
-                (click)="deleteVolunteer(volunteer.id)"
-              >
-                Delete
-              </button>
-            </td>
-          </tr>
+        <tr class="border-b border-gray-200">
+          <td class="py-3 px-4 text-sm text-gray-800">{{ volunteer.name }}</td>
+          <td class="py-3 px-4 text-sm text-gray-600">
+            {{ volunteer.contact }}
+          </td>
+          <td class="py-3 px-4 text-sm text-gray-600">
+            {{ volunteer.address }}
+          </td>
+          <td class="py-3 px-4 text-sm text-gray-600">
+            {{ volunteer.profession }}
+          </td>
+          <td class="py-3 px-4 text-sm text-gray-600">
+            {{ volunteer.availability }}
+          </td>
+          <td class="py-3 px-4 text-center">
+            <button
+              class="bg-blue-500 text-white px-4 py-2 rounded shadow mr-2"
+              (click)="editVolunteer(volunteer)"
+            >
+              Edit
+            </button>
+            <button
+              class="bg-red-500 text-white px-4 py-2 rounded shadow"
+              (click)="deleteVolunteer(volunteer.id)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
         }
       </tbody>
     </table>
+
+    <mat-paginator
+      [length]="totalItems"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      [pageIndex]="currentPage"
+      aria-label="Select page"
+      (page)="onPageChange($event)"
+    >
+    </mat-paginator>
+    }
+
+    <!-- If no donations found -->
+    @if(volunteers.length === 0){
+    <ng-template>
+      <p class="text-gray-600">No donations found.</p>
+    </ng-template>
+    }
   </div>
 </div>

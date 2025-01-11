@@ -4,9 +4,9 @@
   <!-- Add/Update Form -->
   <div class="w-full bg-white p-8 shadow rounded-lg mb-8">
     <h2 class="text-2xl font-semibold text-gray-700 mb-4">
-      {{ isEditMode ? 'Update Donation' : 'Add Donation' }}
+      {{ isEditMode ? "Update Donation" : "Add Donation" }}
     </h2>
-    <form (ngSubmit)="handleSubmit()" class=" grid grid-cols-2 gap-3">
+    <form (ngSubmit)="handleSubmit()" class="grid grid-cols-2 gap-3">
       <!-- Date -->
       <div>
         <label class="block text-sm font-medium text-gray-700">Date</label>
@@ -18,10 +18,12 @@
           required
         />
       </div>
-      
+
       <!-- Donor Name -->
       <div>
-        <label class="block text-sm font-medium text-gray-700">Donor Name</label>
+        <label class="block text-sm font-medium text-gray-700"
+          >Donor Name</label
+        >
         <input
           type="text"
           [(ngModel)]="donation.donorName"
@@ -34,7 +36,9 @@
 
       <!-- Donor Phone -->
       <div>
-        <label class="block text-sm font-medium text-gray-700">Donor Phone</label>
+        <label class="block text-sm font-medium text-gray-700"
+          >Donor Phone</label
+        >
         <input
           type="text"
           [(ngModel)]="donation.donorName"
@@ -60,7 +64,9 @@
 
       <!-- Payment Option -->
       <div>
-        <label class="block text-sm font-medium text-gray-700">Payment Option</label>
+        <label class="block text-sm font-medium text-gray-700"
+          >Payment Option</label
+        >
         <select
           [(ngModel)]="donation.paymentOption"
           name="paymentOption"
@@ -74,83 +80,104 @@
         </select>
       </div>
 
-    <!-- MFS Provider (shown only if MFS is selected) -->
-     @if(donation.paymentOption === 'MFS'){
-    <div>
-      <label class="block text-sm font-medium text-gray-700">MFS Provider</label>
-      <select
-        [(ngModel)]="donation.mfsProvider"
-        name="mfsProvider"
-        class="mt-1 bg-white block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-        required
-      >
-        <option value="">Select MFS Provider</option>
-        <option value="BKASH">Bkash</option>
-        <option value="NAGAD">Nagad</option>
-        <option value="ROKET">Roket</option>
-      </select>
-    </div>
-  }
-      
+      <!-- MFS Provider (shown only if MFS is selected) -->
+      @if(donation.paymentOption === 'MFS'){
+      <div>
+        <label class="block text-sm font-medium text-gray-700"
+          >MFS Provider</label
+        >
+        <select
+          [(ngModel)]="donation.mfsProvider"
+          name="mfsProvider"
+          class="mt-1 bg-white block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          required
+        >
+          <option value="">Select MFS Provider</option>
+          <option value="BKASH">Bkash</option>
+          <option value="NAGAD">Nagad</option>
+          <option value="ROKET">Roket</option>
+        </select>
+      </div>
+      }
     </form>
     <button
-        type="submit"
-        class=" bg-indigo-600 text-white p-3 mt-3 rounded-lg shadow hover:bg-indigo-700 focus:outline-none"
-      >
-        {{ isEditMode ? 'Update Donation' : 'Add Donation' }}
-      </button>
+      type="submit"
+      class="bg-indigo-600 text-white p-3 mt-3 rounded-lg shadow hover:bg-indigo-700 focus:outline-none"
+    >
+      {{ isEditMode ? "Update Donation" : "Add Donation" }}
+    </button>
   </div>
 
   <!-- Donations List -->
   <div>
+    @if(donations.length > 0){
     <h2 class="text-2xl font-semibold text-gray-700 mb-4">Donations List</h2>
-  
-    <!-- Check if donations exist -->
-     @if(donations.length > 0){
+
     <div>
-      <table class="min-w-full table-auto bg-white border-collapse shadow rounded-lg">
+      <table
+        class="min-w-full table-auto bg-white border-collapse shadow rounded-lg"
+      >
         <thead class="bg-gray-100">
           <tr>
-            <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Donor Name</th>
-            <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Amount</th>
-            <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Date</th>
-            <th class="py-2 px-4 text-center text-sm font-medium text-gray-700">Actions</th>
+            <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+              Donor Name
+            </th>
+            <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+              Amount
+            </th>
+            <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+              Date
+            </th>
+            <th class="py-2 px-4 text-center text-sm font-medium text-gray-700">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody>
           @for(donation of donations; track donation.id){
-            <tr class="border-b border-gray-200">
-              <td class="py-3 px-4 text-sm text-gray-800">{{ donation.donorName }}</td>
-              <td class="py-3 px-4 text-sm text-gray-600">{{ donation.amount }} BDT</td>
-              <td class="py-3 px-4 text-sm text-gray-600">{{ donation.date }}</td>
-              <td class="py-3 px-4 text-center">
-                <button
-                  class="bg-blue-500 text-white px-4 py-2 rounded shadow mr-2"
-                  (click)="editDonation(donation)"
-                >
-                  Edit
-                </button>
-                <button
-                  class="bg-red-500 text-white px-4 py-2 rounded shadow"
-                  (click)="deleteDonation(donation.id)"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
+          <tr class="border-b border-gray-200">
+            <td class="py-3 px-4 text-sm text-gray-800">
+              {{ donation.donorName }}
+            </td>
+            <td class="py-3 px-4 text-sm text-gray-600">
+              {{ donation.amount }} BDT
+            </td>
+            <td class="py-3 px-4 text-sm text-gray-600">{{ donation.date }}</td>
+            <td class="py-3 px-4 text-center">
+              <button
+                class="bg-blue-500 text-white px-4 py-2 rounded shadow mr-2"
+                (click)="editDonation(donation)"
+              >
+                Edit
+              </button>
+              <button
+                class="bg-red-500 text-white px-4 py-2 rounded shadow"
+                (click)="deleteDonation(donation.id)"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
           }
         </tbody>
       </table>
+      <mat-paginator
+        [length]="totalItems"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        [pageIndex]="currentPage"
+        aria-label="Select page"
+        (page)="onPageChange($event)"
+      >
+      </mat-paginator>
     </div>
     }
 
     <!-- If no donations found -->
     @if(donations.length === 0){
-      <ng-template>
-        <p class="text-gray-600">No donations found.</p>
-      </ng-template>
+    <ng-template>
+      <p class="text-gray-600">No donations found.</p>
+    </ng-template>
     }
   </div>
-  
 </div>
- 

@@ -1,18 +1,29 @@
 import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatPaginatorModule } from '@angular/material/paginator';
+
+export enum Availability {
+  PART_TIME = 'PART_TIME',
+  FULL_TIME = 'FULL_TIME',
+}
 
 export interface Volunteer {
   id: number;
   name: string;
   contact: string;
-  location: string;
-  role: string;
-  availability: string;
+  emergencyContact: string;
+  address?: string;
+  profession: string;
+  dob: Date;
+  skill: string[];
+  bloodGroup: string;
+  availability: Availability;
+  status: boolean;
 }
 
 @Component({
   selector: 'app-system-volunteer',
-  imports: [ReactiveFormsModule, FormsModule],
+  imports: [ReactiveFormsModule, FormsModule, MatPaginatorModule],
   templateUrl: './volunteer.component.html',
   styleUrls: ['./volunteer.component.scss'],
 })
@@ -20,37 +31,53 @@ export class VolunteerComponent {
   volunteers: Volunteer[] = [
     {
       id: 1,
-      name: 'John Doe',
-      contact: '123-456-7890',
-      location: 'City A',
-      role: 'First Aid Provider',
-      availability: 'Full-Time',
+      name: 'Tanvir Ahmed',
+      contact: '+8801712345678',
+      emergencyContact: '+8801912345678',
+      address: 'House-12, Road-5, Dhanmondi, Dhaka',
+      profession: 'Engineer',
+      dob: new Date('1990-05-15'),
+      skill: ['First Aid', 'Logistics Management'],
+      bloodGroup: 'OP',
+      availability: Availability.FULL_TIME,
+      status: true,
     },
     {
       id: 2,
-      name: 'Jane Smith',
-      contact: '987-654-3210',
-      location: 'Region B',
-      role: 'Logistics Coordinator',
-      availability: 'Part-Time',
+      name: 'Ayesha Rahman',
+      contact: '+8801623456789',
+      emergencyContact: '+8801923456789',
+      address: 'Flat-3B, Gulshan Avenue, Dhaka',
+      profession: 'Doctor',
+      dob: new Date('1988-03-22'),
+      skill: ['Medical Assistance', 'Psychological Support'],
+      bloodGroup: 'AP',
+      availability: Availability.PART_TIME,
+      status: false,
     },
   ];
 
-  currentPage = 1;
-  itemsPerPage = 5;
+  totalItems = 100;
+  pageSize = 10;
+  pageSizeOptions = [5, 10, 25, 50, 100];
+  currentPage = 0;
 
   isEditMode = false;
   currentVolunteer: Volunteer = this.resetVolunteer();
 
-  // Reset volunteer form
   resetVolunteer(): Volunteer {
     return {
       id: 0,
       name: '',
       contact: '',
-      location: '',
-      role: '',
-      availability: 'Full-Time',
+      emergencyContact: '',
+      address: '',
+      profession: '',
+      dob: new Date(), // Default to today's date
+      skill: [],
+      bloodGroup: 'OP', // Default blood group
+      availability: Availability.FULL_TIME, // Default availability
+      status: true, // Default to active
     };
   }
 
@@ -85,14 +112,8 @@ export class VolunteerComponent {
     );
   }
 
-  // Pagination logic
-  getPaginatedVolunteers(): Volunteer[] {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    return this.volunteers.slice(startIndex, startIndex + this.itemsPerPage);
-  }
-
-  // Change page
-  changePage(page: number) {
-    this.currentPage = page;
+  onPageChange(event: any): void {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
   }
 }

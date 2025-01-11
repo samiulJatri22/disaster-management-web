@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 export interface Donation {
   id: number;
@@ -13,7 +14,7 @@ export interface Donation {
 
 @Component({
   selector: 'app-system-donation',
-  imports: [ReactiveFormsModule, FormsModule],
+  imports: [ReactiveFormsModule, FormsModule, MatPaginatorModule],
   templateUrl: './donation.component.html',
   styleUrls: ['./donation.component.scss'],
   providers: [DatePipe],
@@ -47,8 +48,10 @@ export class DonationComponent {
   };
   isEditMode = false;
 
-  currentPage = 1;
-  itemsPerPage = 5;
+  totalItems = 100;
+  pageSize = 10;
+  pageSizeOptions = [5, 10, 25, 50, 100];
+  currentPage = 0;
 
   handleSubmit(): void {
     if (this.isEditMode) {
@@ -84,16 +87,8 @@ export class DonationComponent {
     this.isEditMode = false;
   }
 
-  get paginatedDonations(): Donation[] {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    return this.donations.slice(startIndex, startIndex + this.itemsPerPage);
-  }
-
-  get totalPages(): number {
-    return Math.ceil(this.donations.length / this.itemsPerPage);
-  }
-
-  changePage(page: number): void {
-    this.currentPage = page;
+  onPageChange(event: any): void {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
   }
 }

@@ -4,7 +4,7 @@
   <!-- Form Section -->
   <div class="w-full bg-white p-8 shadow rounded-lg mb-8">
     <h2 class="text-2xl font-semibold text-gray-700 mb-4">
-      {{ isEditMode ? 'Update Crisis Report' : 'Report a New Crisis' }}
+      {{ isEditMode ? "Update Crisis Report" : "Report a New Crisis" }}
     </h2>
     <form (ngSubmit)="handleSubmit()" class="grid grid-cols-2 gap-4">
       <div>
@@ -53,7 +53,9 @@
         </select>
       </div>
       <div class="col-span-2">
-        <label class="block text-sm font-medium text-gray-700">Description</label>
+        <label class="block text-sm font-medium text-gray-700"
+          >Description</label
+        >
         <textarea
           [(ngModel)]="currentCrisis.description"
           name="description"
@@ -68,7 +70,7 @@
           type="submit"
           class="bg-indigo-600 text-white p-3 rounded-lg shadow hover:bg-indigo-700 focus:outline-none"
         >
-          {{ isEditMode ? 'Update Crisis' : 'Add Crisis' }}
+          {{ isEditMode ? "Update Crisis" : "Add Crisis" }}
         </button>
       </div>
     </form>
@@ -77,58 +79,63 @@
   <!-- Crisis List Section -->
   <div>
     <h2 class="text-2xl font-semibold text-gray-700 mb-4">Crisis Reports</h2>
-    <table class="min-w-full table-auto bg-white border-collapse shadow rounded-lg">
+    <table
+      class="min-w-full table-auto bg-white border-collapse shadow rounded-lg"
+    >
       <thead class="bg-gray-100">
         <tr>
-          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Title</th>
-          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Location</th>
-          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Date</th>
-          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Severity</th>
-          <th class="py-2 px-4 text-center text-sm font-medium text-gray-700">Actions</th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+            Title
+          </th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+            Location
+          </th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+            Date
+          </th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+            Severity
+          </th>
+          <th class="py-2 px-4 text-center text-sm font-medium text-gray-700">
+            Actions
+          </th>
         </tr>
       </thead>
       <tbody>
         @for(crisis of crises; track crisis.id){
-          <tr class="border-b border-gray-200">
-            <td class="py-3 px-4 text-sm text-gray-800">{{ crisis.title }}</td>
-            <td class="py-3 px-4 text-sm text-gray-600">{{ crisis.location }}</td>
-            <td class="py-3 px-4 text-sm text-gray-600">{{ crisis.date }}</td>
-            <td class="py-3 px-4 text-sm text-gray-600">{{ crisis.severity }}</td>
-            <td class="py-3 px-4 text-center">
-              <button
-                class="bg-blue-500 text-white px-4 py-2 rounded shadow mr-2"
-                (click)="editCrisis(crisis)"
-              >
-                Edit
-              </button>
-              <button
-                class="bg-red-500 text-white px-4 py-2 rounded shadow"
-                (click)="deleteCrisis(crisis.id)"
-              >
-                Delete
-              </button>
-            </td>
-          </tr>
+        <tr class="border-b border-gray-200">
+          <td class="py-3 px-4 text-sm text-gray-800">{{ crisis.title }}</td>
+          <td class="py-3 px-4 text-sm text-gray-600">{{ crisis.location }}</td>
+          <td class="py-3 px-4 text-sm text-gray-600">{{ crisis.date }}</td>
+          <td class="py-3 px-4 text-sm text-gray-600">{{ crisis.severity }}</td>
+          <td class="py-3 px-4 text-center">
+            <button
+              class="bg-blue-500 text-white px-4 py-2 rounded shadow mr-2"
+              (click)="editCrisis(crisis)"
+            >
+              Edit
+            </button>
+            <button
+              class="bg-red-500 text-white px-4 py-2 rounded shadow"
+              (click)="deleteCrisis(crisis.id)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
         }
       </tbody>
     </table>
 
     <!-- Pagination -->
-    <div class="mt-4 flex justify-center">
-      <button
-        class="bg-gray-300 p-2 mx-1 rounded"
-        [disabled]="currentPage === 1"
-        (click)="changePage(currentPage - 1)"
-      >
-        Previous
-      </button>
-      <button
-        class="bg-gray-300 p-2 mx-1 rounded"
-        [disabled]="currentPage * itemsPerPage >= crises.length"
-        (click)="changePage(currentPage + 1)"
-      >
-        Next
-      </button>
-    </div>
+    <mat-paginator
+      [length]="totalItems"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      [pageIndex]="currentPage"
+      aria-label="Select page"
+      (page)="onPageChange($event)"
+    >
+    </mat-paginator>
   </div>
 </div>

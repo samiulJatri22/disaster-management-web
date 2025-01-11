@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 export interface Crisis {
   id: number;
@@ -12,7 +13,7 @@ export interface Crisis {
 
 @Component({
   selector: 'app-system-crisis',
-  imports: [ReactiveFormsModule, FormsModule],
+  imports: [ReactiveFormsModule, FormsModule, MatPaginatorModule],
   templateUrl: './crisis.component.html',
   styleUrls: ['./crisis.component.scss'],
 })
@@ -36,8 +37,10 @@ export class CrisisComponent {
     },
   ];
 
-  currentPage = 1;
-  itemsPerPage = 5;
+  totalItems = 100;
+  pageSize = 10;
+  pageSizeOptions = [5, 10, 25, 50, 100];
+  currentPage = 0;
 
   isEditMode = false;
   currentCrisis: Crisis = this.resetCrisis();
@@ -83,14 +86,8 @@ export class CrisisComponent {
     this.crises = this.crises.filter((crisis) => crisis.id !== id);
   }
 
-  // Pagination logic
-  getPaginatedCrises(): Crisis[] {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    return this.crises.slice(startIndex, startIndex + this.itemsPerPage);
-  }
-
-  // Change page
-  changePage(page: number) {
-    this.currentPage = page;
+  onPageChange(event: any): void {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
   }
 }
