@@ -1,0 +1,109 @@
+<div class="p-6 bg-gray-100 min-h-screen">
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">Admin User Management</h1>
+
+  <!-- Form Section -->
+  <div class="w-full bg-white p-8 shadow rounded-lg mb-8">
+    <h2 class="text-2xl font-semibold text-gray-700 mb-4">
+      {{ isEditMode ? "Update User" : "Add New User" }}
+    </h2>
+    <form (ngSubmit)="handleSubmit()" class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Name</label>
+        <input
+          type="text"
+          [(ngModel)]="currentUser.name"
+          name="name"
+          class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3"
+          placeholder="Enter user name"
+          required
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Phone</label>
+        <input
+          type="text"
+          [(ngModel)]="currentUser.phone"
+          name="phone"
+          class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3"
+          placeholder="Enter phone number"
+          required
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Email</label>
+        <input
+          type="email"
+          [(ngModel)]="currentUser.email"
+          name="email"
+          class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3"
+          placeholder="Enter email address"
+          required
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Password</label>
+        <input
+          type="password"
+          [(ngModel)]="currentUser.password"
+          name="password"
+          class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3"
+          placeholder="Enter password"
+          [required]="!isEditMode"
+        />
+      </div>
+      <div class="col-span-2">
+        <button
+          type="submit"
+          class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700"
+        >
+          {{ isEditMode ? "Update User" : "Add User" }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- User List Section -->
+  <div>
+    <h2 class="text-2xl font-semibold text-gray-700 mb-4">Users List</h2>
+    <table class="min-w-full table-auto bg-white border-collapse shadow rounded-lg">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Name</th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Phone</th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Email</th>
+          <th class="py-2 px-4 text-center text-sm font-medium text-gray-700">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for(user of users; track user.id){
+        <tr class="border-b border-gray-200">
+          <td class="py-3 px-4">{{ user.name }}</td>
+          <td class="py-3 px-4">{{ user.phone }}</td>
+          <td class="py-3 px-4">{{ user.email }}</td>
+          <td class="py-3 px-4 text-center">
+            <button
+              class="bg-blue-500 text-white px-4 py-2 rounded shadow mr-2"
+              (click)="editUser(user)"
+            >
+              Edit
+            </button>
+            <button
+              class="bg-red-500 text-white px-4 py-2 rounded shadow"
+              (click)="deleteUser(user.id)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      }
+      </tbody>
+    </table>
+
+    <mat-paginator
+      [length]="totalItems"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onPageChange($event)"
+    ></mat-paginator>
+  </div>
+</div>

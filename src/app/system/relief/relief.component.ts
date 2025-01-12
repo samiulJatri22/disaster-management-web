@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 export interface Relief {
   id: number;
@@ -13,7 +14,7 @@ export interface Relief {
 
 @Component({
   selector: 'app-system-relief',
-  imports: [ReactiveFormsModule, FormsModule],
+  imports: [ReactiveFormsModule, FormsModule, MatPaginatorModule],
   templateUrl: './relief.component.html',
   styleUrls: ['./relief.component.scss'],
 })
@@ -39,8 +40,10 @@ export class ReliefComponent {
     },
   ];
 
-  currentPage = 1;
-  itemsPerPage = 5;
+  totalItems = 100;
+  pageSize = 10;
+  pageSizeOptions = [5, 10, 25, 50, 100];
+  currentPage = 0;
 
   isEditMode = false;
   currentRelief: Relief = this.resetRelief();
@@ -94,14 +97,8 @@ export class ReliefComponent {
     this.reliefs = this.reliefs.filter((relief) => relief.id !== id);
   }
 
-  // Pagination logic
-  getPaginatedReliefs(): Relief[] {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    return this.reliefs.slice(startIndex, startIndex + this.itemsPerPage);
-  }
-
-  // Change page
-  changePage(page: number) {
-    this.currentPage = page;
+  onPageChange(event: any): void {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
   }
 }
