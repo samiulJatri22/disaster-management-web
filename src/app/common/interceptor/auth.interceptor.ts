@@ -1,48 +1,40 @@
 import {
   HttpErrorResponse,
   HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
+  HttpHandlerFn,
+  HttpInterceptorFn,
   HttpRequest,
 } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { AuthService, JwtUtilsService } from '../services';
+import { inject } from '@angular/core';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  intercept(req: HttpRequest<any>, next: HttpHandler):
-    Observable<HttpEvent<any>> {
-    const authService = inject(AuthService);
-    const jwtUtilsService = inject(JwtUtilsService)
+export const authInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<any>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<any>> => {
+  const authService = inject(AuthService);
+  const jwtUtilsService = inject(JwtUtilsService);
 
-    let newReq = req.clone();
-
-    if (
-      jwtUtilsService.accessToken &&
-      !jwtUtilsService.isTokenExpired(jwtUtilsService.accessToken)
-    ) {
-      newReq = req.clone({
-        headers: req.headers.set(
-          'Authorization',
-          'Bearer ' + jwtUtilsService.accessToken
-        ),
-      });
-    }
-
-    return next.handle(newReq).pipe(
-      catchError((error) => {
-        // Catch "401 Unauthorized" responses
-        if (error instanceof HttpErrorResponse && error.status === 401) {
-          // Sign out
-          authService.signOut();
-
-          // Reload the app
-          location.reload();
-        }
-
-        return throwError(error);
-      })
-    );
+  let newReq = req;
+  if (
+    jwtUtilsService.accessToken &&
+    !jwtUtilsService.isTokenExpired(jwtUtilsService.accessToken)
+  ) {
+    newReq = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${jwtUtilsService.accessToken}`,
+      },
+    });
   }
-}
+
+  return next(newReq).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401) {
+        authService.signOut();
+        location.reload(); // Reload the app
+      }
+      return throwError(() => error);
+    })
+  );
+};
