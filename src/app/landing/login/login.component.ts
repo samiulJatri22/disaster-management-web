@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -6,6 +6,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService, JwtUtilsService } from '../../common';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +18,14 @@ import { Router, RouterModule } from '@angular/router';
 export class LoginComponent {
   loginForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  private snackBar = inject(MatSnackBar);
+
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService,
+    private readonly jwtService: JwtUtilsService
+  ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -24,12 +33,35 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    if (this.loginForm.valid) {
-      console.log('Login Successful', this.loginForm.value);
-      // Add your login logic here (e.g., API call)
-    } else {
-      console.log('Login Form is Invalid');
+    if (this.loginForm.invalid) {
+      return;
     }
-    this.router.navigate(['/system/dashboard']);
+
+    this.loginForm.disable();
+
+    this.authService.signIn(this.loginForm.value).subscribe(
+      (res: { accessToken: string; refreshToken: string }) => {
+        this.jwtService.setAccessToken(res.accessToken);
+        this.snackBar.open('Successfully login.', '', {
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          duration: 1000,
+        });
+
+        const tokenData = this.jwtService.decodeToken(res.accessToken);
+        this.jwtService.setProfileInfo(tokenData._doc);
+
+        this.router.navigate(['/system/dashboard']);
+      },
+      (e: any) => {
+        this.snackBar.open(e.error.message, '', {
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          duration: 1000,
+        });
+        this.loginForm.enable();
+        this.loginForm.reset();
+      }
+    );
   }
 }

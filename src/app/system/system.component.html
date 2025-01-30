@@ -1,52 +1,54 @@
 <div class="flex h-screen">
   <!-- Sidebar -->
   <div class="w-72 bg-gray-800 text-white flex flex-col">
-    <h2 class="text-2xl font-bold p-4 border-b border-gray-700">Disaster Management</h2>
+    <h2 class="text-2xl font-bold p-4 border-b border-gray-700">
+      Disaster Management
+    </h2>
     <nav class="flex-1">
       <ul class="space-y-2 p-4">
         <li>
-          <a 
-            href="/system/dashboard" 
+          <a
+            href="/system/dashboard"
             class="block py-2 px-4 rounded hover:bg-gray-700"
           >
             Dashboard
           </a>
         </li>
         <li>
-          <a 
-            href="/system/donation" 
+          <a
+            href="/system/donation"
             class="block py-2 px-4 rounded hover:bg-gray-700"
           >
             Donation
           </a>
         </li>
         <li>
-          <a 
-            href="/system/crisis" 
+          <a
+            href="/system/crisis"
             class="block py-2 px-4 rounded hover:bg-gray-700"
           >
             Crisis
           </a>
         </li>
         <li>
-          <a 
-            href="/system/volunteer" 
+          <a
+            href="/system/volunteer"
             class="block py-2 px-4 rounded hover:bg-gray-700"
           >
             Volunteer
           </a>
         </li>
         <li>
-          <a 
-            href="/system/relief" 
+          <a
+            href="/system/relief"
             class="block py-2 px-4 rounded hover:bg-gray-700"
           >
             Relief
           </a>
         </li>
         <li>
-          <a 
-            href="/system/admin" 
+          <a
+            href="/system/admin"
             class="block py-2 px-4 rounded hover:bg-gray-700"
           >
             Admin
@@ -84,8 +86,9 @@
       </ul>
     </nav>
     <div class="p-4 border-t border-gray-700">
-      <a 
-        href="/logout" 
+      <a
+        href="/logout"
+        (click)="onLogout()"
         class="block py-2 px-4 rounded bg-red-500 text-center hover:bg-red-700"
       >
         Logout

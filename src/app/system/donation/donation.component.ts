@@ -6,6 +6,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 export interface Donation {
   id: number;
   donorName: string;
+  donorPhone: string;
   amount: number;
   date: string;
   paymentOption: string;
@@ -24,6 +25,7 @@ export class DonationComponent {
     {
       id: 1,
       donorName: 'John Doe',
+      donorPhone: '01950403624',
       amount: 1000,
       date: '2024-12-01',
       paymentOption: 'CASH',
@@ -32,6 +34,7 @@ export class DonationComponent {
     {
       id: 2,
       donorName: 'Jane Smith',
+      donorPhone: '01950403624',
       amount: 500,
       date: '2024-12-02',
       paymentOption: 'MFS',
@@ -42,6 +45,7 @@ export class DonationComponent {
   donation: Donation = {
     id: 0,
     donorName: '',
+    donorPhone: '',
     amount: 0,
     date: '',
     paymentOption: '',
@@ -80,6 +84,7 @@ export class DonationComponent {
     this.donation = {
       id: 0,
       donorName: '',
+      donorPhone: '',
       amount: 0,
       date: '',
       paymentOption: '',

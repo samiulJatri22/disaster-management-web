@@ -16,12 +16,12 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
       <div class="bg-white shadow-lg rounded-lg p-6 text-center">
         <h2 class="text-xl font-semibold text-gray-800">Total Funds</h2>
-        <p class="text-4xl font-bold text-green-500">$50,000</p>
+        <p class="text-4xl font-bold text-green-500">৳ 50,000</p>
         <p class="text-gray-600">Collected so far</p>
       </div>
       <div class="bg-white shadow-lg rounded-lg p-6 text-center">
         <h2 class="text-xl font-semibold text-gray-800">Total Expenses</h2>
-        <p class="text-4xl font-bold text-red-500">$20,000</p>
+        <p class="text-4xl font-bold text-red-500">৳ 20,000</p>
         <p class="text-gray-600">Used for relief</p>
       </div>
       <div class="bg-white shadow-lg rounded-lg p-6 text-center">
@@ -34,7 +34,10 @@
     <!-- Donation Section -->
     <div class="bg-blue-600 text-white rounded-lg p-6 mb-8">
       <h2 class="text-2xl font-bold mb-4">Make a Difference</h2>
-      <p class="mb-4">Your contribution helps provide relief to those in need. Every dollar counts!</p>
+      <p class="mb-4">
+        Your contribution helps provide relief to those in need. Every Taka
+        counts!
+      </p>
       <a
         href="/donation"
         class="bg-white text-blue-600 px-6 py-2 rounded-md font-semibold hover:bg-gray-100"
@@ -48,7 +51,7 @@
       <h2 class="text-2xl font-bold text-gray-800 mb-4">Recent Crises</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         @for(crisis of recentCrises; track crisis.id){
-          <div
+        <div
           class="bg-white shadow-md rounded-md p-4 hover:shadow-lg transition"
         >
           <img
@@ -56,8 +59,12 @@
             alt="Crisis Image"
             class="w-full h-32 object-cover rounded-md mb-2"
           />
-          <h3 class="font-bold text-gray-700 text-lg mb-1">{{ crisis.title }}</h3>
-          <p class="text-gray-600 text-sm mb-1">Location: {{ crisis.location }}</p>
+          <h3 class="font-bold text-gray-700 text-lg mb-1">
+            {{ crisis.title }}
+          </h3>
+          <p class="text-gray-600 text-sm mb-1">
+            Location: {{ crisis.location }}
+          </p>
           <p class="text-gray-600 text-sm">Severity: {{ crisis.severity }}</p>
         </div>
         }
@@ -66,28 +73,56 @@
 
     <!-- Volunteer Information -->
     <div>
-      <div class="flex flex-wrap justify-between items-center mb-6">
-        <!-- Heading -->
-        <h2 class="text-2xl font-bold text-gray-800">Available Volunteers</h2>
-        
-        <!-- Register Button -->
-        <a
-          href="/volunteer-registration"
-          class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md font-semibold shadow-md transition-transform transform hover:scale-105 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          Register as Volunteer
-        </a>
+      <div class="bg-white py-24 sm:py-32">
+        <div class="mx-auto grid max-w-7xl gap-20 px-6 lg:px-8 xl:grid-cols-3">
+          <!-- Heading Section -->
+          <div class="max-w-xl">
+            <h2
+              class="text-pretty text-3xl font-semibold tracking-tight text-gray-900 sm:text-4xl"
+            >
+              Meet Our Volunteers
+            </h2>
+            <p class="mt-6 text-lg/8 text-gray-600">
+              A dedicated group of individuals passionate about making a
+              difference. Join them to contribute to meaningful causes.
+            </p>
+            <a
+              href="/volunteer-registration"
+              class="mt-8 inline-block bg-blue-600 text-white px-6 py-3 rounded-md font-semibold shadow-md transition-transform transform hover:scale-105 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Register as Volunteer
+            </a>
+          </div>
+
+          <!-- Volunteer List -->
+          <ul
+            role="list"
+            class="grid gap-x-8 gap-y-12 sm:grid-cols-2 sm:gap-y-16 xl:col-span-2"
+          >
+            @for (volunteer of volunteers; track volunteer.id) {
+            <li>
+              <div class="flex items-center gap-x-6">
+                <img
+                  class="h-16 w-16 rounded-full"
+                  src="https://via.placeholder.com/64?text=No+Image"
+                  alt="Photo of {{ volunteer.name }}"
+                />
+                <div>
+                  <h3
+                    class="text-base/7 font-semibold tracking-tight text-gray-900"
+                  >
+                    {{ volunteer.name }}
+                  </h3>
+                  <p class="text-sm/6 font-semibold text-indigo-600">
+                    {{ volunteer.contact }}
+                  </p>
+                </div>
+              </div>
+            </li>
+            }
+          </ul>
+        </div>
       </div>
-      <ul>
-        @for(volunteer of volunteers; track volunteer.id){
-          <li
-          class="border-b py-2 flex justify-between items-center"
-        >
-          <span class="text-gray-700">{{ volunteer.name }}</span>
-          <span class="text-gray-500 text-sm">{{ volunteer.contact }}</span>
-        </li>
-        }
-      </ul>
     </div>
   </div>
 </div>

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-self-registration',
@@ -17,8 +18,10 @@ export class SelfRegistrationComponent {
     bloodGroup: '',
     profession: '',
     skills: '',
-    availability: '',
+    availability: 'FULL_TIME',
   };
+
+  constructor(private router: Router) {}
 
   // Handler for form submission
   handleSelfRegistration() {
@@ -27,5 +30,10 @@ export class SelfRegistrationComponent {
 
     // Optionally, reset the form after successful submission
     alert('Thank you for registering as a volunteer!');
+    this.router.navigate(['/']);
+  }
+
+  redirectToHome(): void {
+    this.router.navigate(['/']);
   }
 }

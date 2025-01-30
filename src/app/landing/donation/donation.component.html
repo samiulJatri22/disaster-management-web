@@ -1,0 +1,121 @@
+<div class="container mx-auto max-w-lg bg-white p-8 shadow rounded-lg mt-3">
+  <h2 class="text-2xl font-semibold text-gray-700 mb-6 text-center">
+    Make a Donation
+  </h2>
+  <form (ngSubmit)="submitDonation()" class="grid grid-cols-1 gap-4">
+    <!-- Name -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Your Name</label>
+      <input
+        type="text"
+        [(ngModel)]="donation.name"
+        name="name"
+        class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        placeholder="Enter your name"
+        required
+      />
+    </div>
+
+    <!-- Email -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Email</label>
+      <input
+        type="email"
+        [(ngModel)]="donation.email"
+        name="email"
+        class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        placeholder="Enter your email"
+        required
+      />
+    </div>
+
+    <!-- Contact Number -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700"
+        >Phone Number</label
+      >
+      <input
+        type="text"
+        [(ngModel)]="donation.phone"
+        name="phone"
+        class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        placeholder="Enter your phone number"
+        required
+      />
+    </div>
+
+    <!-- Donation Amount -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700"
+        >Donation Amount</label
+      >
+      <input
+        type="number"
+        [(ngModel)]="donation.amount"
+        name="amount"
+        class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        placeholder="Enter donation amount"
+        required
+      />
+    </div>
+
+    <!-- Payment Option -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700"
+        >Payment Option</label
+      >
+      <select
+        [(ngModel)]="donation.paymentOption"
+        name="paymentOption"
+        class="mt-1 bg-white block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        required
+      >
+        <option value="">Select Payment Option</option>
+        <option value="CASH">Cash</option>
+        <option value="CARD">Card</option>
+        <option value="MFS">Mobile Financial Service (MFS)</option>
+      </select>
+    </div>
+
+    <!-- MFS Provider (conditionally displayed) -->
+    @if(donation.paymentOption === 'MFS'){
+    <div>
+      <label class="block text-sm font-medium text-gray-700"
+        >MFS Provider</label
+      >
+      <select
+        [(ngModel)]="donation.mfsProvider"
+        name="mfsProvider"
+        class="mt-1 bg-white block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        required
+      >
+        <option value="">Select MFS Provider</option>
+        <option value="BKASH">Bkash</option>
+        <option value="NAGAD">Nagad</option>
+        <option value="ROKET">Roket</option>
+      </select>
+    </div>
+    }
+    <!-- Message (Optional) -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Message</label>
+      <textarea
+        [(ngModel)]="donation.message"
+        name="message"
+        class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        placeholder="Add a message (optional)"
+        rows="3"
+      ></textarea>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="text-center">
+      <button
+        type="submit"
+        class="bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+      >
+        Donate Now
+      </button>
+    </div>
+  </form>
+</div>

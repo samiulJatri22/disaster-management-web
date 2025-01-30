@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
@@ -23,5 +23,13 @@ export class SystemComponent {
       outlet.activatedRouteData &&
       outlet.activatedRouteData['animation']
     );
+  }
+
+  constructor(private router: Router) {}
+
+  onLogout() {
+    localStorage.removeItem('accessToken'); // Remove token
+    localStorage.removeItem('profile'); // Remove token
+    this.router.navigate(['/login']); // Redirect to login
   }
 }
