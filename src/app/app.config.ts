@@ -10,6 +10,7 @@ import {
   CrisisService,
   DonationService,
   JwtUtilsService,
+  ReliefService,
 } from './common';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
@@ -24,5 +25,6 @@ export const appConfig: ApplicationConfig = {
     AdminService,
     CrisisService,
     DonationService,
+    ReliefService,
   ],
 };

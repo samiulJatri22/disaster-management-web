@@ -1,14 +1,21 @@
 import { Component } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { ReliefService } from '../../common';
 
 export interface Relief {
-  id: number;
-  item: string;
+  _id: string;
+  name: string;
   quantity: number;
   unitValue: number;
   totalValue: number;
-  location: string;
+  address: string;
   date: string;
 }
 
@@ -19,86 +26,110 @@ export interface Relief {
   styleUrls: ['./relief.component.scss'],
 })
 export class ReliefComponent {
-  reliefs: Relief[] = [
-    {
-      id: 1,
-      item: 'Rice',
-      quantity: 100,
-      unitValue: 50,
-      totalValue: 5000,
-      location: 'Village A',
-      date: '2024-12-01',
-    },
-    {
-      id: 2,
-      item: 'Blankets',
-      quantity: 50,
-      unitValue: 300,
-      totalValue: 15000,
-      location: 'Village B',
-      date: '2024-12-02',
-    },
-  ];
+  reliefForm: FormGroup;
+  reliefs: Relief[] = [];
+  isEditMode = false;
+  selectedReliefId: string | null = null;
 
-  totalItems = 100;
+  totalItems = 0;
   pageSize = 10;
   pageSizeOptions = [5, 10, 25, 50, 100];
-  currentPage = 0;
+  currentPage = 1;
 
-  isEditMode = false;
-  currentRelief: Relief = this.resetRelief();
-
-  // Reset relief form
-  resetRelief(): Relief {
-    return {
-      id: 0,
-      item: '',
-      quantity: 0,
-      unitValue: 0,
-      totalValue: 0,
-      location: '',
-      date: '',
-    };
+  constructor(private fb: FormBuilder, private reliefService: ReliefService) {
+    this.reliefForm = this.fb.group({
+      name: ['', Validators.required],
+      quantity: [0, [Validators.required, Validators.min(1)]],
+      unitValue: [0, [Validators.required, Validators.min(1)]],
+      totalValue: [{ value: 0, disabled: true }, Validators.required],
+      address: ['', Validators.required],
+      date: ['', Validators.required],
+    });
   }
 
-  // Calculate total value
+  ngOnInit() {
+    this.fetchReliefs();
+    this.reliefForm.valueChanges.subscribe(() => this.calculateTotalValue());
+  }
+
+  fetchReliefs() {
+    this.reliefService
+      .get({ page: this.currentPage, limit: this.pageSize })
+      .subscribe((response: any) => {
+        this.reliefs = response.docs;
+        this.totalItems = response.totalDocs;
+      });
+  }
+
   calculateTotalValue() {
-    this.currentRelief.totalValue =
-      this.currentRelief.quantity * this.currentRelief.unitValue;
+    const quantity = this.reliefForm.get('quantity')?.value || 0;
+    const unitValue = this.reliefForm.get('unitValue')?.value || 0;
+    this.reliefForm.patchValue(
+      { totalValue: quantity * unitValue },
+      { emitEvent: false }
+    );
   }
 
-  // Add or update relief
   handleSubmit() {
-    this.calculateTotalValue();
-    if (this.isEditMode) {
-      const index = this.reliefs.findIndex(
-        (r) => r.id === this.currentRelief.id
-      );
-      if (index !== -1) {
-        this.reliefs[index] = { ...this.currentRelief };
-      }
+    if (this.reliefForm.invalid) return;
+
+    const formData: Relief = this.reliefForm.getRawValue();
+
+    if (this.isEditMode && this.selectedReliefId) {
+      this.reliefService
+        .update({ ...formData, _id: this.selectedReliefId })
+        .subscribe(() => {
+          this.isEditMode = false;
+          this.selectedReliefId = null;
+          this.reliefForm.reset();
+          this.fetchReliefs();
+        });
     } else {
-      this.currentRelief.id = this.reliefs.length + 1; // Simulate ID
-      this.reliefs.push({ ...this.currentRelief });
+      this.reliefService.create(formData).subscribe(() => {
+        this.reliefForm.reset();
+        this.fetchReliefs();
+      });
     }
-
-    this.currentRelief = this.resetRelief();
-    this.isEditMode = false;
   }
 
-  // Edit relief
   editRelief(relief: Relief) {
-    this.currentRelief = { ...relief };
     this.isEditMode = true;
+    this.selectedReliefId = relief._id || null;
+    const formattedDate = new Date(relief.date).toISOString().split('T')[0];
+    this.reliefForm.patchValue({ ...relief, date: formattedDate });
   }
 
-  // Delete relief
-  deleteRelief(id: number) {
-    this.reliefs = this.reliefs.filter((relief) => relief.id !== id);
+  deleteRelief(id: string) {
+    this.reliefService.remove(id).subscribe(() => {
+      this.fetchReliefs();
+    });
   }
 
   onPageChange(event: any): void {
     this.currentPage = event.pageIndex;
     this.pageSize = event.pageSize;
+    this.fetchReliefs();
+  }
+
+  formatDate(date: string): string {
+    const d = new Date(date);
+    const day = d.getDate().toString().padStart(2, '0');
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    const month = monthNames[d.getMonth()];
+    const year = d.getFullYear();
+    return `${day} ${month} ${year}`;
   }
 }

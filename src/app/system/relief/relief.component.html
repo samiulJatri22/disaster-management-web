@@ -4,15 +4,18 @@
   <!-- Form Section -->
   <div class="w-full bg-white p-8 shadow rounded-lg mb-8">
     <h2 class="text-2xl font-semibold text-gray-700 mb-4">
-      {{ isEditMode ? 'Update Relief Record' : 'Add New Relief Record' }}
+      {{ isEditMode ? "Update Relief Record" : "Add New Relief Record" }}
     </h2>
-    <form (ngSubmit)="handleSubmit()" class="grid grid-cols-2 gap-4">
+    <form
+      [formGroup]="reliefForm"
+      (ngSubmit)="handleSubmit()"
+      class="grid grid-cols-2 gap-4"
+    >
       <div>
         <label class="block text-sm font-medium text-gray-700">Item</label>
         <input
           type="text"
-          [(ngModel)]="currentRelief.item"
-          name="item"
+          formControlName="name"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter item name"
           required
@@ -22,32 +25,31 @@
         <label class="block text-sm font-medium text-gray-700">Quantity</label>
         <input
           type="number"
-          [(ngModel)]="currentRelief.quantity"
-          name="quantity"
+          formControlName="quantity"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter quantity"
-          (change)="calculateTotalValue()"
           required
         />
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700">Unit Value</label>
+        <label class="block text-sm font-medium text-gray-700"
+          >Unit Value</label
+        >
         <input
           type="number"
-          [(ngModel)]="currentRelief.unitValue"
-          name="unitValue"
+          formControlName="unitValue"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter unit value"
-          (change)="calculateTotalValue()"
           required
         />
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700">Total Value</label>
+        <label class="block text-sm font-medium text-gray-700"
+          >Total Value</label
+        >
         <input
           type="number"
-          [(ngModel)]="currentRelief.totalValue"
-          name="totalValue"
+          formControlName="totalValue"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           readonly
         />
@@ -56,8 +58,7 @@
         <label class="block text-sm font-medium text-gray-700">Location</label>
         <input
           type="text"
-          [(ngModel)]="currentRelief.location"
-          name="location"
+          formControlName="address"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter location"
           required
@@ -67,8 +68,7 @@
         <label class="block text-sm font-medium text-gray-700">Date</label>
         <input
           type="date"
-          [(ngModel)]="currentRelief.date"
-          name="date"
+          formControlName="date"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required
         />
@@ -78,7 +78,7 @@
           type="submit"
           class="bg-indigo-600 text-white p-3 rounded-lg shadow hover:bg-indigo-700 focus:outline-none"
         >
-          {{ isEditMode ? 'Update Relief Record' : 'Add Relief Record' }}
+          {{ isEditMode ? "Update Relief Record" : "Add Relief Record" }}
         </button>
       </div>
     </form>
@@ -87,54 +87,74 @@
   <!-- Relief List Section -->
   <div>
     <h2 class="text-2xl font-semibold text-gray-700 mb-4">Relief Records</h2>
-    <table class="min-w-full table-auto bg-white border-collapse shadow rounded-lg">
+    <table
+      class="min-w-full table-auto bg-white border-collapse shadow rounded-lg"
+    >
       <thead class="bg-gray-100">
         <tr>
-          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Item</th>
-          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Quantity</th>
-          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Unit Value</th>
-          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Total Value</th>
-          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Location</th>
-          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Date</th>
-          <th class="py-2 px-4 text-center text-sm font-medium text-gray-700">Actions</th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+            Item
+          </th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+            Quantity
+          </th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+            Unit Value
+          </th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+            Total Value
+          </th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+            Location
+          </th>
+          <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
+            Date
+          </th>
+          <th class="py-2 px-4 text-center text-sm font-medium text-gray-700">
+            Actions
+          </th>
         </tr>
       </thead>
       <tbody>
-        @for(relief of reliefs; track relief.id){
-          <tr class="border-b border-gray-200">
-            <td class="py-3 px-4 text-sm text-gray-800">{{ relief.item }}</td>
-            <td class="py-3 px-4 text-sm text-gray-600">{{ relief.quantity }}</td>
-            <td class="py-3 px-4 text-sm text-gray-600">{{ relief.unitValue }}</td>
-            <td class="py-3 px-4 text-sm text-gray-600">{{ relief.totalValue }}</td>
-            <td class="py-3 px-4 text-sm text-gray-600">{{ relief.location }}</td>
-            <td class="py-3 px-4 text-sm text-gray-600">{{ relief.date }}</td>
-            <td class="py-3 px-4 text-center">
-              <button
-                class="bg-blue-500 text-white px-4 py-2 rounded shadow mr-2"
-                (click)="editRelief(relief)"
-              >
-                Edit
-              </button>
-              <button
-                class="bg-red-500 text-white px-4 py-2 rounded shadow"
-                (click)="deleteRelief(relief.id)"
-              >
-                Delete
-              </button>
-            </td>
-          </tr>
+        @for(relief of reliefs; track relief._id){
+        <tr class="border-b border-gray-200">
+          <td class="py-3 px-4 text-sm text-gray-800">{{ relief.name }}</td>
+          <td class="py-3 px-4 text-sm text-gray-600">{{ relief.quantity }}</td>
+          <td class="py-3 px-4 text-sm text-gray-600">
+            {{ relief.unitValue }}
+          </td>
+          <td class="py-3 px-4 text-sm text-gray-600">
+            {{ relief.totalValue }}
+          </td>
+          <td class="py-3 px-4 text-sm text-gray-600">{{ relief.address }}</td>
+          <td class="py-3 px-4 text-sm text-gray-600">
+            {{ formatDate(relief.date) }}
+          </td>
+          <td class="py-3 px-4 text-center">
+            <button
+              class="bg-blue-500 text-white px-4 py-2 rounded shadow mr-2"
+              (click)="editRelief(relief)"
+            >
+              Edit
+            </button>
+            <button
+              class="bg-red-500 text-white px-4 py-2 rounded shadow"
+              (click)="deleteRelief(relief._id)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
         }
       </tbody>
     </table>
     <mat-paginator
-        [length]="totalItems"
-        [pageSize]="pageSize"
-        [pageSizeOptions]="pageSizeOptions"
-        [pageIndex]="currentPage"
-        aria-label="Select page"
-        (page)="onPageChange($event)"
-      >
-      </mat-paginator>
-   
+      [length]="totalItems"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      [pageIndex]="currentPage"
+      (page)="onPageChange($event)"
+    >
+    </mat-paginator>
   </div>
 </div>
