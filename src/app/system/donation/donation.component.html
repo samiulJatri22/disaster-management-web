@@ -6,17 +6,19 @@
     <h2 class="text-2xl font-semibold text-gray-700 mb-4">
       {{ isEditMode ? "Update Donation" : "Add Donation" }}
     </h2>
-    <form (ngSubmit)="handleSubmit()" class="grid grid-cols-2 gap-3">
+    <form [formGroup]="donationForm" class="grid grid-cols-2 gap-3">
       <!-- Date -->
       <div>
         <label class="block text-sm font-medium text-gray-700">Date</label>
         <input
           type="date"
-          [(ngModel)]="donation.date"
-          name="date"
+          formControlName="date"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          required
         />
+        @if( donationForm.get('date')?.invalid &&
+        donationForm.get('date')?.touched){
+        <small class="text-red-500"> Date is required </small>
+        }
       </div>
 
       <!-- Donor Name -->
@@ -26,12 +28,17 @@
         >
         <input
           type="text"
-          [(ngModel)]="donation.donorName"
-          name="donorName"
+          formControlName="name"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter donor name"
           required
         />
+        @if( donationForm.get('name')?.invalid &&
+        donationForm.get('name')?.touched){
+        <small class="text-red-500">
+          Donor Name must be at least 3 characters
+        </small>
+        }
       </div>
 
       <!-- Donor Phone -->
@@ -41,12 +48,17 @@
         >
         <input
           type="text"
-          [(ngModel)]="donation.donorPhone"
-          name="donorPhone"
+          formControlName="phone"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          placeholder="Enter donor name"
+          placeholder="Enter donor phone"
           required
         />
+        @if(donationForm.get('phone')?.invalid &&
+        donationForm.get('phone')?.touched){
+        <small class="text-red-500">
+          Enter a valid 11-digit phone number
+        </small>
+        }
       </div>
 
       <!-- Amount -->
@@ -54,12 +66,15 @@
         <label class="block text-sm font-medium text-gray-700">Amount</label>
         <input
           type="number"
-          [(ngModel)]="donation.amount"
-          name="amount"
+          formControlName="amount"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter donation amount"
           required
         />
+        @if(donationForm.get('amount')?.invalid &&
+        donationForm.get('amount')?.touched){
+        <small class="text-red-500"> Amount must be greater than 0 </small>
+        }
       </div>
 
       <!-- Payment Option -->
@@ -68,8 +83,7 @@
           >Payment Option</label
         >
         <select
-          [(ngModel)]="donation.paymentOption"
-          name="paymentOption"
+          formControlName="paymentOption"
           class="mt-1 bg-white block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required
         >
@@ -81,16 +95,14 @@
       </div>
 
       <!-- MFS Provider (shown only if MFS is selected) -->
-      @if(donation.paymentOption === 'MFS'){
+      @if(donationForm.get('paymentOption')?.value === 'MFS'){
       <div>
         <label class="block text-sm font-medium text-gray-700"
           >MFS Provider</label
         >
         <select
-          [(ngModel)]="donation.mfsProvider"
-          name="mfsProvider"
+          formControlName="mfsProvider"
           class="mt-1 bg-white block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          required
         >
           <option value="">Select MFS Provider</option>
           <option value="BKASH">Bkash</option>
@@ -100,8 +112,11 @@
       </div>
       }
     </form>
+
     <button
       type="submit"
+      (click)="handleSubmit()"
+      [disabled]="donationForm.invalid"
       class="bg-indigo-600 text-white p-3 mt-3 rounded-lg shadow hover:bg-indigo-700 focus:outline-none"
     >
       {{ isEditMode ? "Update Donation" : "Add Donation" }}
@@ -110,7 +125,7 @@
 
   <!-- Donations List -->
   <div>
-    @if(donations.length > 0){
+    @if(totalItems > 0){
     <h2 class="text-2xl font-semibold text-gray-700 mb-4">Donations List</h2>
 
     <div>
@@ -120,7 +135,7 @@
         <thead class="bg-gray-100">
           <tr>
             <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
-              Donor Name
+              Donor
             </th>
             <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
               Amount
@@ -134,15 +149,17 @@
           </tr>
         </thead>
         <tbody>
-          @for(donation of donations; track donation.id){
+          @for(donation of donations; track donation._id){
           <tr class="border-b border-gray-200">
             <td class="py-3 px-4 text-sm text-gray-800">
-              {{ donation.donorName }}
+              {{ donation.name }} - {{ donation.phone }}
             </td>
             <td class="py-3 px-4 text-sm text-gray-600">
               {{ donation.amount }} BDT
             </td>
-            <td class="py-3 px-4 text-sm text-gray-600">{{ donation.date }}</td>
+            <td class="py-3 px-4 text-sm text-gray-600">
+              {{ formatDate(donation.date) }}
+            </td>
             <td class="py-3 px-4 text-center">
               <button
                 class="bg-blue-500 text-white px-4 py-2 rounded shadow mr-2"
@@ -152,7 +169,7 @@
               </button>
               <button
                 class="bg-red-500 text-white px-4 py-2 rounded shadow"
-                (click)="deleteDonation(donation.id)"
+                (click)="deleteDonation(donation._id)"
               >
                 Delete
               </button>
@@ -174,10 +191,10 @@
     }
 
     <!-- If no donations found -->
-    @if(donations.length === 0){
-    <ng-template>
+    @if(totalItems == 0){
+    <div>
       <p class="text-gray-600">No donations found.</p>
-    </ng-template>
+    </div>
     }
   </div>
 </div>

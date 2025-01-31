@@ -1,12 +1,19 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { DonationService } from '../../common';
 
 export interface Donation {
-  id: number;
-  donorName: string;
-  donorPhone: string;
+  _id: string;
+  name: string;
+  phone: string;
   amount: number;
   date: string;
   paymentOption: string;
@@ -21,79 +28,123 @@ export interface Donation {
   providers: [DatePipe],
 })
 export class DonationComponent {
-  donations: Donation[] = [
-    {
-      id: 1,
-      donorName: 'John Doe',
-      donorPhone: '01950403624',
-      amount: 1000,
-      date: '2024-12-01',
-      paymentOption: 'CASH',
-      mfsProvider: null,
-    },
-    {
-      id: 2,
-      donorName: 'Jane Smith',
-      donorPhone: '01950403624',
-      amount: 500,
-      date: '2024-12-02',
-      paymentOption: 'MFS',
-      mfsProvider: 'BKASH',
-    },
-  ];
-
-  donation: Donation = {
-    id: 0,
-    donorName: '',
-    donorPhone: '',
-    amount: 0,
-    date: '',
-    paymentOption: '',
-  };
+  donationForm!: FormGroup;
+  donations: Donation[] = [];
   isEditMode = false;
+  selectedDonationId: string | null = null;
 
-  totalItems = 100;
+  totalItems = 0;
   pageSize = 10;
   pageSizeOptions = [5, 10, 25, 50, 100];
-  currentPage = 0;
+  currentPage = 1;
+
+  constructor(
+    private fb: FormBuilder,
+    private donationService: DonationService
+  ) {}
+
+  ngOnInit(): void {
+    this.initForm();
+    this.loadDonations();
+  }
+
+  initForm(): void {
+    this.donationForm = this.fb.group({
+      date: ['', Validators.required],
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      phone: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
+      amount: [null, [Validators.required, Validators.min(1)]],
+      paymentOption: ['', Validators.required],
+      mfsProvider: [''],
+    });
+
+    this.donationForm
+      .get('paymentOption')
+      ?.valueChanges.subscribe((value: any) => {
+        if (value === 'MFS') {
+          this.donationForm
+            .get('mfsProvider')
+            ?.setValidators([Validators.required]);
+        } else {
+          this.donationForm.get('mfsProvider')?.clearValidators();
+        }
+        this.donationForm.get('mfsProvider')?.updateValueAndValidity();
+      });
+  }
+
+  loadDonations(): void {
+    this.donationService
+      .get({ page: this.currentPage, limit: this.pageSize })
+      .subscribe((response: any) => {
+        this.donations = response.docs;
+        this.totalItems = response.totalDocs;
+      });
+  }
 
   handleSubmit(): void {
-    if (this.isEditMode) {
-      const index = this.donations.findIndex((d) => d.id === this.donation.id);
-      if (index !== -1) this.donations[index] = { ...this.donation };
+    if (this.donationForm.invalid) return;
+
+    const donationData = this.donationForm.value;
+
+    if (this.isEditMode && this.selectedDonationId) {
+      this.donationService
+        .update({ _id: this.selectedDonationId, ...donationData })
+        .subscribe(() => {
+          this.loadDonations();
+          this.resetForm();
+        });
     } else {
-      const newId =
-        this.donations.length > 0
-          ? Math.max(...this.donations.map((d) => d.id)) + 1
-          : 1;
-      this.donations.push({ ...this.donation, id: newId });
+      this.donationService.create(donationData).subscribe(() => {
+        this.loadDonations();
+        this.resetForm();
+      });
     }
-    this.resetForm();
   }
 
   editDonation(donation: Donation): void {
-    this.donation = { ...donation };
+    const formattedDate = new Date(donation.date).toISOString().split('T')[0];
+    this.donationForm.patchValue({ ...donation, date: formattedDate });
+    this.selectedDonationId = donation._id;
     this.isEditMode = true;
   }
 
-  deleteDonation(id: number): void {
-    this.donations = this.donations.filter((d) => d.id !== id);
+  deleteDonation(id: string): void {
+    this.donationService.remove(id).subscribe(() => {
+      this.loadDonations();
+    });
   }
 
   resetForm(): void {
-    this.donation = {
-      id: 0,
-      donorName: '',
-      donorPhone: '',
-      amount: 0,
-      date: '',
-      paymentOption: '',
-    };
+    this.donationForm.reset();
     this.isEditMode = false;
+    this.selectedDonationId = null;
   }
 
   onPageChange(event: any): void {
     this.currentPage = event.pageIndex;
     this.pageSize = event.pageSize;
+    this.loadDonations();
+  }
+
+  formatDate(date: string): string {
+    const d = new Date(date);
+    const day = d.getDate().toString().padStart(2, '0');
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    const month = monthNames[d.getMonth()];
+    const year = d.getFullYear();
+    return `${day} ${month} ${year}`;
   }
 }
