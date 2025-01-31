@@ -1,12 +1,19 @@
 import { Component } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { CrisisService } from '../../common';
 
 export interface Crisis {
-  id: number;
+  _id: string;
   title: string;
   description: string;
-  location: string;
+  address: string;
   date: string;
   severity: 'LOW' | 'MEDIUM' | 'HIGH';
 }
@@ -18,76 +25,102 @@ export interface Crisis {
   styleUrls: ['./crisis.component.scss'],
 })
 export class CrisisComponent {
-  crises: Crisis[] = [
-    {
-      id: 1,
-      title: 'Flood in City A',
-      description: 'Severe flooding due to heavy rainfall.',
-      location: 'City A',
-      date: '2024-12-01',
-      severity: 'HIGH',
-    },
-    {
-      id: 2,
-      title: 'Earthquake in Region B',
-      description: '5.6 magnitude earthquake caused destruction.',
-      location: 'Region B',
-      date: '2024-11-28',
-      severity: 'MEDIUM',
-    },
-  ];
+  crisisForm: FormGroup;
+  crises: Crisis[] = [];
+  isEditMode = false;
+  selectedCrisisId: string | null = null;
 
-  totalItems = 100;
+  totalItems = 0;
   pageSize = 10;
   pageSizeOptions = [5, 10, 25, 50, 100];
-  currentPage = 0;
+  currentPage = 1;
 
-  isEditMode = false;
-  currentCrisis: Crisis = this.resetCrisis();
-
-  // Reset crisis form
-  resetCrisis(): Crisis {
-    return {
-      id: 0,
-      title: '',
-      description: '',
-      location: '',
-      date: '',
-      severity: 'MEDIUM',
-    };
+  constructor(private fb: FormBuilder, private crisisService: CrisisService) {
+    this.crisisForm = this.fb.group({
+      title: ['', Validators.required],
+      description: ['', Validators.required],
+      address: ['', Validators.required],
+      date: ['', Validators.required],
+      severity: ['MEDIUM', Validators.required],
+    });
   }
 
-  // Add or update crisis
-  handleSubmit() {
-    if (this.isEditMode) {
-      const index = this.crises.findIndex(
-        (c) => c.id === this.currentCrisis.id
-      );
-      if (index !== -1) {
-        this.crises[index] = { ...this.currentCrisis };
-      }
+  ngOnInit(): void {
+    this.loadCrises();
+  }
+
+  loadCrises(): void {
+    this.crisisService
+      .get({ page: this.currentPage, limit: this.pageSize })
+      .subscribe((response: any) => {
+        this.crises = response.docs;
+        this.totalItems = response.totalDocs;
+      });
+  }
+
+  handleSubmit(): void {
+    if (this.crisisForm.invalid) return;
+
+    if (this.isEditMode && this.selectedCrisisId) {
+      this.crisisService
+        .update({ _id: this.selectedCrisisId, ...this.crisisForm.value })
+        .subscribe(() => {
+          this.loadCrises();
+          this.resetForm();
+        });
     } else {
-      this.currentCrisis.id = this.crises.length + 1; // Simulate ID
-      this.crises.push({ ...this.currentCrisis });
+      this.crisisService.create(this.crisisForm.value).subscribe(() => {
+        this.loadCrises();
+        this.resetForm();
+      });
     }
-
-    this.currentCrisis = this.resetCrisis();
-    this.isEditMode = false;
   }
 
-  // Edit crisis
-  editCrisis(crisis: Crisis) {
-    this.currentCrisis = { ...crisis };
+  editCrisis(crisis: Crisis): void {
     this.isEditMode = true;
+    this.selectedCrisisId = crisis._id;
+    const formattedDate = new Date(crisis.date).toISOString().split('T')[0];
+
+    this.crisisForm.patchValue({ ...crisis, date: formattedDate });
   }
 
-  // Delete crisis
-  deleteCrisis(id: number) {
-    this.crises = this.crises.filter((crisis) => crisis.id !== id);
+  deleteCrisis(id: string): void {
+    this.crisisService.remove(id.toString()).subscribe(() => {
+      this.loadCrises();
+    });
+  }
+
+  resetForm(): void {
+    this.isEditMode = false;
+    this.selectedCrisisId = null;
+    this.crisisForm.reset({ severity: 'MEDIUM' });
   }
 
   onPageChange(event: any): void {
     this.currentPage = event.pageIndex;
     this.pageSize = event.pageSize;
+    this.loadCrises();
+  }
+
+  formatDate(date: string): string {
+    const d = new Date(date);
+    const day = d.getDate().toString().padStart(2, '0');
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    const month = monthNames[d.getMonth()];
+    const year = d.getFullYear();
+    return `${day} ${month} ${year}`;
   }
 }

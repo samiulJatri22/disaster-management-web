@@ -7,6 +7,7 @@ import {
   AdminService,
   authInterceptor,
   AuthService,
+  CrisisService,
   JwtUtilsService,
 } from './common';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -20,5 +21,6 @@ export const appConfig: ApplicationConfig = {
     AuthService,
     JwtUtilsService,
     AdminService,
+    CrisisService,
   ],
 };

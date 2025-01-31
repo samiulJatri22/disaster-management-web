@@ -1,18 +1,19 @@
 <div class="p-6 bg-gray-100 min-h-screen">
   <h1 class="text-3xl font-bold text-gray-800 mb-6">Crisis Management</h1>
-
-  <!-- Form Section -->
   <div class="w-full bg-white p-8 shadow rounded-lg mb-8">
     <h2 class="text-2xl font-semibold text-gray-700 mb-4">
       {{ isEditMode ? "Update Crisis Report" : "Report a New Crisis" }}
     </h2>
-    <form (ngSubmit)="handleSubmit()" class="grid grid-cols-2 gap-4">
+    <form
+      [formGroup]="crisisForm"
+      (ngSubmit)="handleSubmit()"
+      class="grid grid-cols-2 gap-4"
+    >
       <div>
         <label class="block text-sm font-medium text-gray-700">Title</label>
         <input
+          formControlName="title"
           type="text"
-          [(ngModel)]="currentCrisis.title"
-          name="title"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter crisis title"
           required
@@ -21,9 +22,8 @@
       <div>
         <label class="block text-sm font-medium text-gray-700">Location</label>
         <input
+          formControlName="address"
           type="text"
-          [(ngModel)]="currentCrisis.location"
-          name="location"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter location"
           required
@@ -32,9 +32,8 @@
       <div>
         <label class="block text-sm font-medium text-gray-700">Date</label>
         <input
+          formControlName="date"
           type="date"
-          [(ngModel)]="currentCrisis.date"
-          name="date"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required
         />
@@ -42,8 +41,7 @@
       <div>
         <label class="block text-sm font-medium text-gray-700">Severity</label>
         <select
-          [(ngModel)]="currentCrisis.severity"
-          name="severity"
+          formControlName="severity"
           class="mt-1 bg-white block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required
         >
@@ -57,8 +55,7 @@
           >Description</label
         >
         <textarea
-          [(ngModel)]="currentCrisis.description"
-          name="description"
+          formControlName="description"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           rows="4"
           placeholder="Enter detailed description"
@@ -75,8 +72,6 @@
       </div>
     </form>
   </div>
-
-  <!-- Crisis List Section -->
   <div>
     <h2 class="text-2xl font-semibold text-gray-700 mb-4">Crisis Reports</h2>
     <table
@@ -102,11 +97,13 @@
         </tr>
       </thead>
       <tbody>
-        @for(crisis of crises; track crisis.id){
+        @for(crisis of crises; track crisis._id){
         <tr class="border-b border-gray-200">
           <td class="py-3 px-4 text-sm text-gray-800">{{ crisis.title }}</td>
-          <td class="py-3 px-4 text-sm text-gray-600">{{ crisis.location }}</td>
-          <td class="py-3 px-4 text-sm text-gray-600">{{ crisis.date }}</td>
+          <td class="py-3 px-4 text-sm text-gray-600">{{ crisis.address }}</td>
+          <td class="py-3 px-4 text-sm text-gray-600">
+            {{ formatDate(crisis.date) }}
+          </td>
           <td class="py-3 px-4 text-sm text-gray-600">{{ crisis.severity }}</td>
           <td class="py-3 px-4 text-center">
             <button
@@ -117,7 +114,7 @@
             </button>
             <button
               class="bg-red-500 text-white px-4 py-2 rounded shadow"
-              (click)="deleteCrisis(crisis.id)"
+              (click)="deleteCrisis(crisis._id)"
             >
               Delete
             </button>
@@ -126,16 +123,12 @@
         }
       </tbody>
     </table>
-
-    <!-- Pagination -->
     <mat-paginator
       [length]="totalItems"
       [pageSize]="pageSize"
       [pageSizeOptions]="pageSizeOptions"
       [pageIndex]="currentPage"
-      aria-label="Select page"
       (page)="onPageChange($event)"
-    >
-    </mat-paginator>
+    ></mat-paginator>
   </div>
 </div>
