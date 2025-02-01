@@ -29,7 +29,7 @@ export class AdminComponent implements OnInit {
   totalItems = 0;
   pageSize = 10;
   pageSizeOptions = [5, 10, 25, 50];
-  currentPage = 1;
+  currentPage = 0;
   isEditMode = false;
   userForm!: FormGroup;
   selectedUserId: string | null = null;
@@ -52,7 +52,7 @@ export class AdminComponent implements OnInit {
 
   loadUsers() {
     this.adminService
-      .get({ page: this.currentPage, limit: this.pageSize })
+      .get({ page: this.currentPage + 1, limit: this.pageSize })
       .subscribe((res: any) => {
         this.users = res.docs;
         this.totalItems = res.totalDocs;

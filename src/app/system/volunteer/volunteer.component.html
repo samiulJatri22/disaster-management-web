@@ -6,13 +6,16 @@
     <h2 class="text-2xl font-semibold text-gray-700 mb-4">
       {{ isEditMode ? "Update Volunteer" : "Add New Volunteer" }}
     </h2>
-    <form (ngSubmit)="handleSubmit()" class="grid grid-cols-2 gap-4">
+    <form
+      [formGroup]="volunteerForm"
+      (ngSubmit)="handleSubmit()"
+      class="grid grid-cols-2 gap-4"
+    >
       <div>
         <label class="block text-sm font-medium text-gray-700">Name</label>
         <input
           type="text"
-          [(ngModel)]="currentVolunteer.name"
-          name="name"
+          formControlName="name"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter volunteer's name"
           required
@@ -22,8 +25,7 @@
         <label class="block text-sm font-medium text-gray-700">Contact</label>
         <input
           type="text"
-          [(ngModel)]="currentVolunteer.contact"
-          name="contact"
+          formControlName="contact"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter contact number"
           required
@@ -35,8 +37,7 @@
         >
         <input
           type="text"
-          [(ngModel)]="currentVolunteer.emergencyContact"
-          name="emergencyContact"
+          formControlName="emergencyContact"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter emergency contact number"
           required
@@ -46,8 +47,7 @@
         <label class="block text-sm font-medium text-gray-700">Address</label>
         <input
           type="text"
-          [(ngModel)]="currentVolunteer.address"
-          name="address"
+          formControlName="address"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter address"
         />
@@ -58,8 +58,7 @@
         >
         <input
           type="text"
-          [(ngModel)]="currentVolunteer.profession"
-          name="profession"
+          formControlName="profession"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter profession"
           required
@@ -71,8 +70,7 @@
         >
         <input
           type="date"
-          [(ngModel)]="currentVolunteer.dob"
-          name="dob"
+          formControlName="dob"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required
         />
@@ -81,8 +79,7 @@
         <label class="block text-sm font-medium text-gray-700">Skills</label>
         <input
           type="text"
-          [(ngModel)]="currentVolunteer.skill"
-          name="skill"
+          formControlName="skills"
           class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter skills (comma-separated)"
           required
@@ -93,8 +90,7 @@
           >Blood Group</label
         >
         <select
-          [(ngModel)]="currentVolunteer.bloodGroup"
-          name="bloodGroup"
+          formControlName="bloodGroup"
           class="mt-1 bg-white block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required
         >
@@ -113,8 +109,7 @@
           >Availability</label
         >
         <select
-          [(ngModel)]="currentVolunteer.availability"
-          name="availability"
+          formControlName="availability"
           class="mt-1 bg-white block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required
         >
@@ -126,13 +121,12 @@
       <div>
         <label class="block text-sm font-medium text-gray-700">Status</label>
         <select
-          [(ngModel)]="currentVolunteer.status"
-          name="status"
+          formControlName="status"
           class="mt-1 bg-white block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required
         >
-          <option value="true">Active</option>
-          <option value="false">Inactive</option>
+          <option [value]="true">Active</option>
+          <option [value]="false">Inactive</option>
         </select>
       </div>
       <div class="col-span-2">
@@ -148,7 +142,7 @@
 
   <!-- Volunteer List Section -->
   <div>
-    @if(volunteers.length > 0){
+    @if(totalItems > 0){
     <h2 class="text-2xl font-semibold text-gray-700 mb-4">Volunteers List</h2>
     <table
       class="min-w-full table-auto bg-white border-collapse shadow rounded-lg"
@@ -165,7 +159,7 @@
             Location
           </th>
           <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
-            Role
+            Profession
           </th>
           <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">
             Availability
@@ -176,7 +170,7 @@
         </tr>
       </thead>
       <tbody>
-        @for(volunteer of volunteers; track volunteer.id){
+        @for(volunteer of volunteers; track volunteer._id){
         <tr class="border-b border-gray-200">
           <td class="py-3 px-4 text-sm text-gray-800">{{ volunteer.name }}</td>
           <td class="py-3 px-4 text-sm text-gray-600">
@@ -200,7 +194,7 @@
             </button>
             <button
               class="bg-red-500 text-white px-4 py-2 rounded shadow"
-              (click)="deleteVolunteer(volunteer.id)"
+              (click)="deleteVolunteer(volunteer._id)"
             >
               Delete
             </button>
@@ -222,9 +216,9 @@
     }
 
     <!-- If no donations found -->
-    @if(volunteers.length === 0){
+    @if(totalItems === 0){
     <ng-template>
-      <p class="text-gray-600">No donations found.</p>
+      <p class="text-gray-600">No volunteer found.</p>
     </ng-template>
     }
   </div>

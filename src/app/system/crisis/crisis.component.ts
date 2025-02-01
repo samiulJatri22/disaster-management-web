@@ -33,7 +33,7 @@ export class CrisisComponent {
   totalItems = 0;
   pageSize = 10;
   pageSizeOptions = [5, 10, 25, 50, 100];
-  currentPage = 1;
+  currentPage = 0;
 
   constructor(private fb: FormBuilder, private crisisService: CrisisService) {
     this.crisisForm = this.fb.group({
@@ -51,7 +51,7 @@ export class CrisisComponent {
 
   loadCrises(): void {
     this.crisisService
-      .get({ page: this.currentPage, limit: this.pageSize })
+      .get({ page: this.currentPage + 1, limit: this.pageSize })
       .subscribe((response: any) => {
         this.crises = response.docs;
         this.totalItems = response.totalDocs;

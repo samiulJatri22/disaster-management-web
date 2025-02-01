@@ -34,7 +34,7 @@ export class ReliefComponent {
   totalItems = 0;
   pageSize = 10;
   pageSizeOptions = [5, 10, 25, 50, 100];
-  currentPage = 1;
+  currentPage = 0;
 
   constructor(private fb: FormBuilder, private reliefService: ReliefService) {
     this.reliefForm = this.fb.group({
@@ -54,7 +54,7 @@ export class ReliefComponent {
 
   fetchReliefs() {
     this.reliefService
-      .get({ page: this.currentPage, limit: this.pageSize })
+      .get({ page: this.currentPage + 1, limit: this.pageSize })
       .subscribe((response: any) => {
         this.reliefs = response.docs;
         this.totalItems = response.totalDocs;

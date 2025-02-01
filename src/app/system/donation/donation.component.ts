@@ -36,7 +36,7 @@ export class DonationComponent {
   totalItems = 0;
   pageSize = 10;
   pageSizeOptions = [5, 10, 25, 50, 100];
-  currentPage = 1;
+  currentPage = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -74,7 +74,7 @@ export class DonationComponent {
 
   loadDonations(): void {
     this.donationService
-      .get({ page: this.currentPage, limit: this.pageSize })
+      .get({ page: this.currentPage + 1, limit: this.pageSize })
       .subscribe((response: any) => {
         this.donations = response.docs;
         this.totalItems = response.totalDocs;

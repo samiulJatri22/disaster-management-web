@@ -4,3 +4,4 @@ export * from './admin.service';
 export * from './crisis.service';
 export * from './donation.service';
 export * from './relief.service';
+export * from './volunteer.service';

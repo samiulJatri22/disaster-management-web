@@ -1,6 +1,13 @@
 import { Component } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { VolunteerService } from '../../common';
 
 export enum Availability {
   PART_TIME = 'PART_TIME',
@@ -8,14 +15,14 @@ export enum Availability {
 }
 
 export interface Volunteer {
-  id: number;
+  _id: string;
   name: string;
   contact: string;
   emergencyContact: string;
   address?: string;
   profession: string;
   dob: Date;
-  skill: string[];
+  skills: string[];
   bloodGroup: string;
   availability: Availability;
   status: boolean;
@@ -28,92 +35,108 @@ export interface Volunteer {
   styleUrls: ['./volunteer.component.scss'],
 })
 export class VolunteerComponent {
-  volunteers: Volunteer[] = [
-    {
-      id: 1,
-      name: 'Tanvir Ahmed',
-      contact: '+8801712345678',
-      emergencyContact: '+8801912345678',
-      address: 'House-12, Road-5, Dhanmondi, Dhaka',
-      profession: 'Engineer',
-      dob: new Date('1990-05-15'),
-      skill: ['First Aid', 'Logistics Management'],
-      bloodGroup: 'OP',
-      availability: Availability.FULL_TIME,
-      status: true,
-    },
-    {
-      id: 2,
-      name: 'Ayesha Rahman',
-      contact: '+8801623456789',
-      emergencyContact: '+8801923456789',
-      address: 'Flat-3B, Gulshan Avenue, Dhaka',
-      profession: 'Doctor',
-      dob: new Date('1988-03-22'),
-      skill: ['Medical Assistance', 'Psychological Support'],
-      bloodGroup: 'AP',
-      availability: Availability.PART_TIME,
-      status: false,
-    },
-  ];
+  volunteerForm: FormGroup;
+  volunteers: Volunteer[] = [];
+  isEditMode = false;
+  selectedVolunteerId: string | null = null;
 
-  totalItems = 100;
+  totalItems = 0;
   pageSize = 10;
   pageSizeOptions = [5, 10, 25, 50, 100];
   currentPage = 0;
 
-  isEditMode = false;
-  currentVolunteer: Volunteer = this.resetVolunteer();
+  constructor(
+    private fb: FormBuilder,
+    private volunteerService: VolunteerService
+  ) {
+    this.volunteerForm = this.fb.group({
+      name: ['', Validators.required],
+      contact: ['', Validators.required],
+      emergencyContact: ['', Validators.required],
+      address: [''],
+      profession: ['', Validators.required],
+      dob: ['', Validators.required],
+      skills: ['', Validators.required],
+      bloodGroup: ['OP', Validators.required],
+      availability: [Availability.FULL_TIME, Validators.required],
+      status: [true, Validators.required],
+    });
+  }
 
-  resetVolunteer(): Volunteer {
-    return {
-      id: 0,
+  ngOnInit(): void {
+    this.loadVolunteers();
+  }
+
+  loadVolunteers(): void {
+    // Adjust the API call as needed for your backend's pagination
+    this.volunteerService
+      .get({ page: this.currentPage + 1, limit: this.pageSize })
+      .subscribe((response: any) => {
+        this.volunteers = response.docs;
+        this.totalItems = response.totalDocs;
+      });
+  }
+
+  handleSubmit(): void {
+    if (this.volunteerForm.invalid) return;
+
+    // Convert comma-separated skills string to an array
+    const formValue = this.volunteerForm.value;
+    const volunteerData: Volunteer = {
+      ...formValue,
+      // skill: formValue.skill.split(',').map((s: string) => s.trim()),
+    };
+
+    if (this.isEditMode && this.selectedVolunteerId) {
+      volunteerData._id = this.selectedVolunteerId;
+      this.volunteerService.update(volunteerData).subscribe(() => {
+        this.loadVolunteers();
+        this.resetForm();
+      });
+    } else {
+      this.volunteerService.create(volunteerData).subscribe(() => {
+        this.loadVolunteers();
+        this.resetForm();
+      });
+    }
+  }
+
+  editVolunteer(volunteer: Volunteer): void {
+    this.isEditMode = true;
+    this.selectedVolunteerId = volunteer._id || null;
+    const formattedDate = new Date(volunteer.dob).toISOString().split('T')[0];
+    // Convert skills array into a comma-separated string for display in the input
+    this.volunteerForm.patchValue({ ...volunteer, dob: formattedDate });
+  }
+
+  deleteVolunteer(id: string): void {
+    if (confirm('Are you sure you want to delete this volunteer?')) {
+      this.volunteerService.remove(id).subscribe(() => {
+        this.loadVolunteers();
+      });
+    }
+  }
+
+  resetForm(): void {
+    this.volunteerForm.reset({
       name: '',
       contact: '',
       emergencyContact: '',
       address: '',
       profession: '',
-      dob: new Date(), // Default to today's date
-      skill: [],
-      bloodGroup: 'OP', // Default blood group
-      availability: Availability.FULL_TIME, // Default availability
-      status: true, // Default to active
-    };
-  }
-
-  // Add or update volunteer
-  handleSubmit() {
-    if (this.isEditMode) {
-      const index = this.volunteers.findIndex(
-        (v) => v.id === this.currentVolunteer.id
-      );
-      if (index !== -1) {
-        this.volunteers[index] = { ...this.currentVolunteer };
-      }
-    } else {
-      this.currentVolunteer.id = this.volunteers.length + 1; // Simulate ID
-      this.volunteers.push({ ...this.currentVolunteer });
-    }
-
-    this.currentVolunteer = this.resetVolunteer();
+      dob: '',
+      skill: '',
+      bloodGroup: 'OP',
+      availability: Availability.FULL_TIME,
+      status: true,
+    });
     this.isEditMode = false;
-  }
-
-  // Edit volunteer
-  editVolunteer(volunteer: Volunteer) {
-    this.currentVolunteer = { ...volunteer };
-    this.isEditMode = true;
-  }
-
-  // Delete volunteer
-  deleteVolunteer(id: number) {
-    this.volunteers = this.volunteers.filter(
-      (volunteer) => volunteer.id !== id
-    );
+    this.selectedVolunteerId = null;
   }
 
   onPageChange(event: any): void {
     this.currentPage = event.pageIndex;
     this.pageSize = event.pageSize;
+    this.loadVolunteers();
   }
 }
